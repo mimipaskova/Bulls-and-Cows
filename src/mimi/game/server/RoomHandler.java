@@ -5,6 +5,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import mimi.game.Guessable;
+import mimi.game.Result;
+
 public class RoomHandler implements Runnable {
 	private volatile Socket clientFirst;
 	private volatile Socket clientSecond;
@@ -12,6 +15,8 @@ public class RoomHandler implements Runnable {
 	private boolean waitingForPlayer = true;
 	private boolean waitingForFirstInput = true;
 	
+	private int stepToGuess = 0;
+	private Guessable g;
 	private String wordToGuess;
 
 	public RoomHandler(Socket first) {
@@ -56,7 +61,9 @@ public class RoomHandler implements Runnable {
 					if (command.equals("FINP:")) {
 						if (this.wordToGuess == null) {
 							this.wordToGuess = message.substring(5);
+							g = new Guessable(this.wordToGuess);
 							outputStreamSecond.writeUTF("WINP:Guess the number");
+							System.out.println("The number is " + this.wordToGuess);
 						}
 					}
 					
@@ -70,13 +77,19 @@ public class RoomHandler implements Runnable {
 						if (this.wordToGuess == null) {
 							continue;
 						}
-						String g = message.substring(5);
-						outputStreamFirst.writeUTF(g);
-						if (g.equals(this.wordToGuess)) {
-							String finalMessage = "The word is guessed!";
+						stepToGuess++;
+						
+						String guessTry = message.substring(5);
+						outputStreamFirst.writeUTF(guessTry);
+						System.out.println(guessTry);
+						Result result = g.guess(guessTry);
+						if (result.getBulls() == 4) {
+							String finalMessage = "The word is guessed!\n It took it " + stepToGuess + " steps to guess the number.";
 							outputStreamFirst.writeUTF("FINA:" + finalMessage);
 							outputStreamSecond.writeUTF("FINA:" + finalMessage);
 						} else {
+							outputStreamFirst.writeUTF(result.toString());
+							outputStreamSecond.writeUTF(result.toString());
 							outputStreamSecond.writeUTF("WINP:Guess the number");
 						}
 					}

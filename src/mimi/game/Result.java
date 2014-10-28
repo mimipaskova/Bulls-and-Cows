@@ -17,5 +17,10 @@ public class Result {
 	public int getBulls() {
 		return bulls;
 	}
+	
+	@Override
+	public String toString() {
+		return "bulls " + this.bulls + " cows " + this.cows;
+	}
 
 }

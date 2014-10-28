@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class GameClient {
 	private static final int PORT = 5001;
-	private static final String HOST = "localhost";
+	private static final String HOST = "94.236.211.27";
 	private static Scanner input = new Scanner(System.in);
 
 	public static void main(String[] args) throws UnknownHostException,
