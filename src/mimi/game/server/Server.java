@@ -31,10 +31,12 @@ public class Server extends Thread {
 			try {
 				Socket clientSocket = serverSocket.accept();
 				if(needsSecondPlayer) {
+					System.out.println("Second player connected");
 					room.addSecondPlayer(clientSocket);
 					needsSecondPlayer = false;
 					continue;
 				} else {
+					System.out.println("First player connected");
 					room = new RoomHandler(clientSocket);
 					needsSecondPlayer = true;
 				}
